@@ -17,16 +17,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 
 @Component
 public class FileService {
 
     private Logger log = LoggerFactory.getLogger(SoporteDocumentalController.class);
-
+    Integer lastvalue = 0;
     private final Path fileStorageLocation;
 
     public FileService(@Value("${file.directory}") String filePath) {
@@ -56,8 +54,11 @@ public class FileService {
                 if (!Files.exists(stepPath))
                     Files.createDirectory(stepPath);
 
+                validateFileName(stepPath,desagrupador);
                 File directory=new File(stepPath.toString()+"/");
-                int numberFile=directory.list().length+1;
+                Integer numberFile=lastvalue;
+                log.info("VALOR REGRESADO :{}",numberFile);
+
                 String newFileNameToCreate = buildFileNameToCreate(solicitud, step, desagrupador, (long) numberFile) + getExtensionFile(fileName);
                 String targetPath = newFileNameToCreate;
 
@@ -120,4 +121,50 @@ public class FileService {
     public String getExtensionFile(String filename) {
         return "."+filename.substring(filename.lastIndexOf(".")+1);
     }
+
+    public Integer validateFileName(Path stepPath,String desagrupador) {
+
+        Path finalPath = Paths.get(stepPath.toString()+"/");
+        File[] ficheros = finalPath.toFile().listFiles();
+        List<String> lista = new ArrayList<String>();
+        List<Integer> consecutivo = new ArrayList<Integer>();
+        if(ficheros.length==0){
+            lastvalue = 1;
+
+            return lastvalue;
+
+        }else{
+            for (int x=0;x < ficheros.length;x++){
+                String newName = ficheros[x].getName();
+                String[] arrOfStr = newName.split("_", 10);
+                String numeros = arrOfStr[3];
+                String[] arrOfNumbers = numeros.split("\\.");
+                if(arrOfStr[2].equals(desagrupador)){
+                    lista.add(newName);
+                    consecutivo.add(Integer.parseInt(String.valueOf(arrOfNumbers[0])));
+                }
+
+            }
+            if(lista.isEmpty()){
+                lastvalue = 1;
+
+                return lastvalue;
+            }else {
+                Collections.sort(consecutivo);
+                List<Integer> ordenedList = new ArrayList<Integer>();
+
+                for(int i=0; i<consecutivo.size();i++ )
+                {
+                    ordenedList.add(consecutivo.get(i));
+                }
+                lastvalue = ordenedList.get(ordenedList.size()-1) +1;
+                return lastvalue;
+            }
+
+
+        }
+
+
+    }
+
 }

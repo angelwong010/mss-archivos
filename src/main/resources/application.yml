@@ -1,0 +1,29 @@
+server:
+  port: 8082
+  servlet:
+    contextPath: /msscabcs-archivos
+
+spring:
+  multipart:
+    maxFileSize: 200Mb
+    maxRequestSize: 250Mb
+#    datasource:
+#     platform: mariadb
+#     driverClassName: org.mariadb.jdbc.Driver
+#     url: jdbc:mariadb:failover://10.250.8.194:3306/SCABSDBQA?autoReconnect=true
+#     username: SCABS_USER
+#     password: 5C4BS_US3R$
+#     timeBetweenEvictionRunsMillis: 1000
+#     testWhileIdle: true
+#     validationQuery: SELECT 1
+#     hikari:
+#      maximum-pool-size: 1
+#    jpa:
+#      show-sql: true
+#      hibernate:
+#          ddl-auto: update
+    application:
+      name: msscabcs-archivos
+
+file:
+  directory: ./files_scabs

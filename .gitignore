@@ -12,6 +12,7 @@ target/
 .settings
 .springBeans
 .sts4-cache
+/files_scabs
 
 ### IntelliJ IDEA ###
 .idea
